@@ -9,7 +9,7 @@ public sealed class Plugin : BaseUnityPlugin
 {
     public const string PluginGuid = "com.nick7676.nuclearcommander";
     public const string PluginName = "Nuclear Commander";
-    public const string PluginVersion = "0.13.0";
+    public const string PluginVersion = "0.13.1";
 
     private CommanderSettings _settings = null!;
     private CommanderWindow _window = null!;

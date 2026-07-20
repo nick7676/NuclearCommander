@@ -13,7 +13,7 @@ The mod uses the game's vehicle catalogue, prices, player allocation, factions, 
 - Preview rotation with `Q` and `E`
 - Terrain slope, water, and collision checks
 - Placement inside friendly airport areas
-- Placement within 1 km of friendly FOBs
+- Placement within 1 km of friendly static or mobile FOB logistics units
 - Optional hold-position order for newly placed vehicles
 - Automatic refund when spawning fails
 
@@ -39,7 +39,7 @@ The mod uses the game's vehicle catalogue, prices, player allocation, factions, 
 The BepInEx log should contain:
 
 ```text
-Nuclear Commander 0.13.0 loaded successfully.
+Nuclear Commander 0.13.1 loaded successfully.
 ```
 
 ## Usage
@@ -53,7 +53,7 @@ Nuclear Commander 0.13.0 loaded successfully.
 7. Rotate the preview with `Q` and `E`.
 8. Left-click to purchase and place the vehicle.
 
-The preview turns green when placement is valid and red when it is not. Placement is allowed only inside a friendly airport area or within 1,000 metres of a friendly FOB. The deployment area restriction is not drawn on the terrain.
+The preview turns green when placement is valid and red when it is not. Placement is allowed only inside a friendly airport area or within 1,000 metres of a friendly static or mobile FOB. Mobile logistics vehicles and containers that provide rearming or refuelling count as FOB support units. The deployment area restriction is not drawn on the terrain.
 
 Press `F6` again or use the **Close** button to leave placement mode.
 
@@ -99,12 +99,6 @@ HoldPosition = true
 - Make sure BepInEx is installed next to `NuclearOption.exe`, not inside `NuclearOption_Data`.
 - Update Nuclear Commander after a Nuclear Option update if internal game APIs have changed.
 - Temporarily disable other plugins when investigating a conflict.
-
-## Disclaimer
-
-Nuclear Commander is an unofficial community mod and is not affiliated with or endorsed by Shockfront Studios or BepInEx.
-
-Nuclear Option is in Early Access. Game updates may break unofficial code mods until they are updated.
 
 ## License
 

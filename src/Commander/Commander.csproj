@@ -3,7 +3,7 @@
     <TargetFramework>netstandard2.1</TargetFramework>
     <AssemblyName>Commander</AssemblyName>
     <RootNamespace>Commander</RootNamespace>
-    <Version>0.13.0</Version>
+    <Version>0.13.1</Version>
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
     <ImplicitUsings>disable</ImplicitUsings>

@@ -53,7 +53,7 @@ internal sealed class CommanderSettings
             "Placement",
             "FobPlacementRadius",
             1000f,
-            "Maximum placement distance in metres from a friendly FOB.");
+            "Maximum placement distance in metres from a friendly FOB or mobile logistics unit.");
 
         HoldPosition = config.Bind(
             "Placement",

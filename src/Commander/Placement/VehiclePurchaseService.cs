@@ -34,8 +34,9 @@ internal sealed class VehiclePurchaseService
                 out message);
         }
 
-        float cost = vehicle.value;
-        if (localPlayer.Allocation < cost)
+        float cost = Mathf.Max(0f, vehicle.value);
+        float initialAllocation = localPlayer.Allocation;
+        if (initialAllocation < cost)
         {
             return Reject("insufficient funds", out message);
         }
@@ -47,12 +48,19 @@ internal sealed class VehiclePurchaseService
         }
 
         string uniqueName = $"{vehicle.jsonKey}_commander_{Guid.NewGuid():N}";
+        float remainingAllocation = initialAllocation - cost;
         bool fundsDeducted = false;
 
         try
         {
-            localPlayer.AddAllocation(-cost);
+            localPlayer.SetAllocation(remainingAllocation);
             fundsDeducted = true;
+
+            if (!Mathf.Approximately(localPlayer.Allocation, remainingAllocation))
+            {
+                throw new InvalidOperationException(
+                    $"Allocation update failed: expected {remainingAllocation}, got {localPlayer.Allocation}.");
+            }
 
             GroundVehicle spawnedVehicle = spawner.SpawnVehicle(
                 vehicle.unitPrefab,
@@ -73,7 +81,9 @@ internal sealed class VehiclePurchaseService
             Physics.SyncTransforms();
 
             string costText = UnitConverter.ValueReading(cost);
-            _log.LogInfo($"Vehicle purchased: {vehicle.unitName} ({costText}) at {position}");
+            _log.LogInfo(
+                $"Vehicle purchased: {vehicle.unitName} ({costText}) at {position}; " +
+                $"allocation {initialAllocation} -> {localPlayer.Allocation}");
             message = $"Purchased: {vehicle.unitName} ({costText}).";
             return true;
         }
@@ -81,7 +91,7 @@ internal sealed class VehiclePurchaseService
         {
             if (fundsDeducted)
             {
-                localPlayer.AddAllocation(cost);
+                localPlayer.SetAllocation(initialAllocation);
             }
 
             _log.LogError($"Failed to spawn {vehicle.unitName}; funds refunded: {exception}");
