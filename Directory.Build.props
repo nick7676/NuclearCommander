@@ -1,0 +1,26 @@
+<Project>
+  <Import Project="Local.props" Condition="Exists('Local.props')" />
+
+  <PropertyGroup>
+    <NuclearOptionDir Condition="'$(NuclearOptionDir)' == ''">C:\Program Files (x86)\Steam\steamapps\common\Nuclear Option</NuclearOptionDir>
+    <ManagedDir>$(NuclearOptionDir)\NuclearOption_Data\Managed</ManagedDir>
+    <IncludeGameAssemblies Condition="'$(IncludeGameAssemblies)' == ''">false</IncludeGameAssemblies>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(IncludeGameAssemblies)' == 'true' AND Exists('$(ManagedDir)\Assembly-CSharp.dll')">
+    <Reference Include="Assembly-CSharp">
+      <HintPath>$(ManagedDir)\Assembly-CSharp.dll</HintPath>
+      <Private>false</Private>
+      <Publicize>true</Publicize>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(IncludeGameAssemblies)' == 'true' AND Exists('$(ManagedDir)\Mirage.dll')">
+    <Reference Include="Mirage">
+      <HintPath>$(ManagedDir)\Mirage.dll</HintPath>
+      <Private>false</Private>
+      <Publicize>true</Publicize>
+    </Reference>
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,7 @@
+<Project>
+  <PropertyGroup>
+    <NuclearOptionDir>C:\Program Files (x86)\Steam\steamapps\common\Nuclear Option</NuclearOptionDir>
+    <IncludeGameAssemblies>false</IncludeGameAssemblies>
+    <DeployOnBuild>false</DeployOnBuild>
+  </PropertyGroup>
+</Project>
