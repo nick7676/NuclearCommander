@@ -7,7 +7,7 @@ The mod uses the game's vehicle catalogue, prices, player allocation, factions, 
 ## Features
 
 - Complete individual ground-vehicle catalogue, including air-defense units
-- Search and air-defense filters
+- Search and category filters for support, light, AFV, tanks, artillery, and air defense
 - Native in-game prices and player funds
 - Green/red placement preview
 - Preview rotation with `Q` and `E`
@@ -39,7 +39,7 @@ The mod uses the game's vehicle catalogue, prices, player allocation, factions, 
 The BepInEx log should contain:
 
 ```text
-Nuclear Commander 0.13.1 loaded successfully.
+Nuclear Commander 0.14.0 loaded successfully.
 ```
 
 ## Usage
@@ -47,7 +47,7 @@ Nuclear Commander 0.13.1 loaded successfully.
 1. Join or start a mission as the host.
 2. Make sure you are not controlling an aircraft and the tactical map is closed.
 3. Press `F6` to open Nuclear Commander.
-4. Search for a vehicle or select the air-defense filter.
+4. Search for a vehicle or select a vehicle category.
 5. Select a vehicle from the list.
 6. Move the pointer over the terrain.
 7. Rotate the preview with `Q` and `E`.

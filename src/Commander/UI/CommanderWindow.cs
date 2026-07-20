@@ -9,7 +9,7 @@ internal sealed class CommanderWindow
 {
     private const int WindowId = 19820426;
 
-    private Rect _rect = new(20f, 80f, 480f, 610f);
+    private Rect _rect = new(20f, 80f, 500f, 640f);
     private Vector2 _scroll;
     private string _search = string.Empty;
     private VehicleFilter _filter = VehicleFilter.All;
@@ -18,6 +18,11 @@ internal sealed class CommanderWindow
     private enum VehicleFilter
     {
         All,
+        Support,
+        Light,
+        ArmoredFightingVehicles,
+        Tanks,
+        Artillery,
         AirDefense
     }
 
@@ -84,7 +89,7 @@ internal sealed class CommanderWindow
         _search = GUILayout.TextField(_search);
         GUILayout.Space(4f);
 
-        _scroll = GUILayout.BeginScrollView(_scroll, GUILayout.Height(390f));
+        _scroll = GUILayout.BeginScrollView(_scroll, GUILayout.Height(380f));
 
         int visibleVehicles = 0;
         bool allowEventContent = MissionManager.AllowEventContent;
@@ -115,18 +120,27 @@ internal sealed class CommanderWindow
     private void DrawFilters()
     {
         GUILayout.BeginHorizontal();
-
-        if (GUILayout.Toggle(_filter == VehicleFilter.All, "All", GUI.skin.button))
-        {
-            _filter = VehicleFilter.All;
-        }
-
-        if (GUILayout.Toggle(_filter == VehicleFilter.AirDefense, "Air defense", GUI.skin.button))
-        {
-            _filter = VehicleFilter.AirDefense;
-        }
-
+        DrawFilterButton(VehicleFilter.All, "All");
+        DrawFilterButton(VehicleFilter.Support, "Support");
+        DrawFilterButton(VehicleFilter.Light, "Light");
+        DrawFilterButton(VehicleFilter.ArmoredFightingVehicles, "AFV");
         GUILayout.EndHorizontal();
+
+        GUILayout.BeginHorizontal();
+        DrawFilterButton(VehicleFilter.Tanks, "Tanks");
+        DrawFilterButton(VehicleFilter.Artillery, "Artillery");
+        DrawFilterButton(VehicleFilter.AirDefense, "Air defense");
+        GUILayout.EndHorizontal();
+    }
+
+    private void DrawFilterButton(VehicleFilter filter, string label)
+    {
+        bool selected = _filter == filter;
+        if (GUILayout.Toggle(selected, label, GUI.skin.button) && !selected)
+        {
+            _filter = filter;
+            _scroll = Vector2.zero;
+        }
     }
 
     private static void DrawVehicleButton(
@@ -187,14 +201,20 @@ internal sealed class CommanderWindow
 
     private bool MatchesFilter(VehicleDefinition vehicle)
     {
-        if (_filter == VehicleFilter.All)
+        return _filter switch
         {
-            return true;
-        }
-
-        return vehicle.vehicleType == VehicleType.AAA ||
-               vehicle.vehicleType == VehicleType.IR_SAM ||
-               vehicle.vehicleType == VehicleType.R_SAM ||
-               vehicle.vehicleType == VehicleType.RDR;
+            VehicleFilter.All => true,
+            VehicleFilter.Support => vehicle.vehicleType == VehicleType.TRUCK,
+            VehicleFilter.Light => vehicle.vehicleType is VehicleType.UGV or VehicleType.LCV,
+            VehicleFilter.ArmoredFightingVehicles => vehicle.vehicleType == VehicleType.AFV,
+            VehicleFilter.Tanks => vehicle.vehicleType == VehicleType.MBT,
+            VehicleFilter.Artillery => vehicle.vehicleType == VehicleType.ART,
+            VehicleFilter.AirDefense => vehicle.vehicleType is
+                VehicleType.AAA or
+                VehicleType.IR_SAM or
+                VehicleType.R_SAM or
+                VehicleType.RDR,
+            _ => false
+        };
     }
 }

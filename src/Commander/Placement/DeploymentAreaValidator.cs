@@ -79,7 +79,7 @@ internal static class DeploymentAreaValidator
 
         foreach (Rearmer rearmer in _rearmers)
         {
-            if (IsFriendlyOperationalComponent(rearmer, localHq) &&
+            if (IsFriendlyOperationalRearmer(rearmer, localHq) &&
                 IsWithinHorizontalRadius(position, rearmer.transform.position, radius))
             {
                 return true;
@@ -88,7 +88,7 @@ internal static class DeploymentAreaValidator
 
         foreach (Refueler refueler in _refuelers)
         {
-            if (IsFriendlyOperationalComponent(refueler, localHq) &&
+            if (IsFriendlyOperationalRefueler(refueler, localHq) &&
                 IsWithinHorizontalRadius(position, refueler.transform.position, radius))
             {
                 return true;
@@ -111,20 +111,47 @@ internal static class DeploymentAreaValidator
         _nextLogisticsRefresh = Time.unscaledTime + LogisticsCacheLifetime;
     }
 
-    private static bool IsFriendlyOperationalComponent(Component component, FactionHQ localHq)
+    private static bool IsFriendlyOperationalRearmer(Rearmer rearmer, FactionHQ localHq)
     {
-        if (component == null)
+        if (rearmer == null)
         {
             return false;
         }
 
-        Unit unit = component.GetComponentInParent<Unit>();
+        Unit unit = rearmer.unit != null
+            ? rearmer.unit
+            : rearmer.GetComponentInParent<Unit>();
+        return IsFriendlyOperationalUnit(unit, localHq);
+    }
+
+    private static bool IsFriendlyOperationalRefueler(Refueler refueler, FactionHQ localHq)
+    {
+        if (refueler == null)
+        {
+            return false;
+        }
+
+        Unit unit = refueler.attachedUnit != null
+            ? refueler.attachedUnit
+            : refueler.GetComponentInParent<Unit>();
         return IsFriendlyOperationalUnit(unit, localHq);
     }
 
     private static bool IsFriendlyOperationalUnit(Unit unit, FactionHQ localHq)
     {
-        return unit != null && !unit.Networkdisabled && unit.NetworkHQ == localHq;
+        if (unit == null || unit.Networkdisabled)
+        {
+            return false;
+        }
+
+        if (unit.NetworkHQ == localHq || unit.MapHQ == localHq)
+        {
+            return true;
+        }
+
+        return unit is Container container &&
+               UnitRegistry.TryGetPersistentUnit(container.NetworkownerID, out PersistentUnit owner) &&
+               owner.GetHQ() == localHq;
     }
 
     private static bool IsWithinHorizontalRadius(Vector3 position, Vector3 center, float radius)
