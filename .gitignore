@@ -5,4 +5,4 @@ Local.props
 .idea/
 *.user
 *.suo
-
+artifacts/

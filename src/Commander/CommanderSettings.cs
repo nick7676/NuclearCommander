@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using BepInEx.Configuration;
 using UnityEngine;
 
@@ -5,8 +6,13 @@ namespace Commander;
 
 internal sealed class CommanderSettings
 {
+    private readonly ConfigFile _config;
+    private readonly Dictionary<string, ConfigEntry<float>> _vehiclePrices = new();
+    private bool _vehiclePricesRegistered;
+
     public CommanderSettings(ConfigFile config)
     {
+        _config = config;
         Enabled = config.Bind(
             "General",
             "Enabled",
@@ -71,4 +77,49 @@ internal sealed class CommanderSettings
     public ConfigEntry<float> MaximumSlope { get; }
     public ConfigEntry<float> FobPlacementRadius { get; }
     public ConfigEntry<bool> HoldPosition { get; }
+
+    public void RegisterVehiclePrices()
+    {
+        if (_vehiclePricesRegistered ||
+            Encyclopedia.i == null ||
+            Encyclopedia.i.vehicles == null ||
+            Encyclopedia.i.vehicles.Count == 0)
+        {
+            return;
+        }
+
+        bool saveOnConfigSet = _config.SaveOnConfigSet;
+        _config.SaveOnConfigSet = false;
+        try
+        {
+            foreach (VehicleDefinition vehicle in Encyclopedia.i.vehicles)
+            {
+                if (vehicle == null || string.IsNullOrWhiteSpace(vehicle.jsonKey))
+                {
+                    continue;
+                }
+
+                _vehiclePrices[vehicle.jsonKey] = _config.Bind(
+                    "Vehicle Prices",
+                    vehicle.jsonKey,
+                    vehicle.value,
+                    $"Purchase price for {vehicle.unitName}.");
+            }
+
+            _config.Save();
+            _vehiclePricesRegistered = true;
+        }
+        finally
+        {
+            _config.SaveOnConfigSet = saveOnConfigSet;
+        }
+    }
+
+    public float GetVehiclePrice(VehicleDefinition vehicle)
+    {
+        RegisterVehiclePrices();
+        return _vehiclePrices.TryGetValue(vehicle.jsonKey, out ConfigEntry<float> price)
+            ? Mathf.Max(0f, price.Value)
+            : Mathf.Max(0f, vehicle.value);
+    }
 }

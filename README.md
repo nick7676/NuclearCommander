@@ -1,6 +1,6 @@
 # Nuclear Commander
 
-Nuclear Commander is an unofficial [BepInEx 5](https://github.com/BepInEx/BepInEx) mod for **Nuclear Option** that lets the host purchase and place individual ground vehicles during a mission.
+Nuclear Commander is a [BepInEx 5](https://github.com/BepInEx/BepInEx) mod for **Nuclear Option** that lets the host purchase and place individual ground vehicles during a mission.
 
 The mod uses the game's vehicle catalogue, prices, player allocation, factions, and native server spawner. Vehicles are purchased individually rather than as platoons.
 
@@ -8,7 +8,7 @@ The mod uses the game's vehicle catalogue, prices, player allocation, factions, 
 
 - Complete individual ground-vehicle catalogue, including air-defense units
 - Search and category filters for support, light, AFV, tanks, artillery, and air defense
-- Native in-game prices and player funds
+- Configurable price for every vehicle, with native in-game prices as defaults
 - Green/red placement preview
 - Preview rotation with `Q` and `E`
 - Terrain slope, water, and collision checks
@@ -34,12 +34,12 @@ The mod uses the game's vehicle catalogue, prices, player allocation, factions, 
    ```
 
 5. Copy `Commander.dll` into that folder.
-6. Start Nuclear Option.
+6. Start Nuclear Option and reach the main menu once.
 
 The BepInEx log should contain:
 
 ```text
-Nuclear Commander 0.14.0 loaded successfully.
+Nuclear Commander 0.15.0 loaded successfully.
 ```
 
 ## Usage
@@ -62,8 +62,6 @@ Press `F6` again or use the **Close** button to leave placement mode.
 Vehicle placement currently works in single-player and for the multiplayer host. Connected clients cannot submit purchase requests yet, even when they have the mod installed.
 
 Vehicles placed by the host use Nuclear Option's native server spawner and synchronize as normal game units. Using the same mod version for everyone in the lobby is recommended.
-
-Always obtain the server owner's permission before using gameplay-changing mods, especially in public or competitive sessions.
 
 ## Configuration
 
@@ -91,6 +89,30 @@ MaximumSlope = 18
 FobPlacementRadius = 1000
 HoldPosition = true
 ```
+
+## Configuration app
+
+Download `NuclearCommander.Configurator.exe` from the [latest release](https://github.com/nick7676/NuclearCommander/releases/latest) to edit Nuclear Commander settings without starting the game. The configurator is a standalone desktop application and does not load the mod DLL.
+
+Place the executable in the folder containing `NuclearOption.exe` and run it while the game is closed. It automatically finds `BepInEx/config` and provides:
+
+- clear General, Controls, and Placement sections;
+- direct editing of every Nuclear Commander setting;
+- a searchable price table for every vehicle, including its original game price;
+- reload and reset-to-default actions;
+- automatic `.bak` backups before saving;
+- automatic creation of the configuration file when necessary.
+
+The configurator requires the [.NET 8 Desktop Runtime for Windows x64](https://dotnet.microsoft.com/download/dotnet/8.0). If automatic detection fails, use **Choose folder** and select either the Nuclear Option folder or `BepInEx/config` directly.
+
+Before editing vehicle prices:
+
+1. Install `Commander.dll`.
+2. Start Nuclear Option and reach the main menu once.
+3. Close the game.
+4. Open `NuclearCommander.Configurator.exe` and select **Vehicle prices**.
+
+The first game launch lets the mod read the current in-game catalogue and add every vehicle to the configuration file. If the table is empty, close the configurator, launch the game once with Nuclear Commander 0.15.0, then reopen the configurator or press **Reload**. Prices cannot be negative, and **Defaults** restores every vehicle's native game price.
 
 ## Troubleshooting
 

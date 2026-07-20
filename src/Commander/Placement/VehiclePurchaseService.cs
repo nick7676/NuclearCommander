@@ -34,7 +34,7 @@ internal sealed class VehiclePurchaseService
                 out message);
         }
 
-        float cost = Mathf.Max(0f, vehicle.value);
+        float cost = _settings.GetVehiclePrice(vehicle);
         float initialAllocation = localPlayer.Allocation;
         if (initialAllocation < cost)
         {

@@ -9,7 +9,7 @@ public sealed class Plugin : BaseUnityPlugin
 {
     public const string PluginGuid = "com.nick7676.nuclearcommander";
     public const string PluginName = "Nuclear Commander";
-    public const string PluginVersion = "0.14.0";
+    public const string PluginVersion = "0.15.0";
 
     private CommanderSettings _settings = null!;
     private CommanderWindow _window = null!;
@@ -32,7 +32,8 @@ public sealed class Plugin : BaseUnityPlugin
 
     private void Update()
     {
-        _placement?.Tick(_settings.Enabled.Value);
+        _settings.RegisterVehiclePrices();
+        _placement.Tick(_settings.Enabled.Value);
     }
 
     private void OnGUI()

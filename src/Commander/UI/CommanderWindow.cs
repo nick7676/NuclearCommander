@@ -148,8 +148,9 @@ internal sealed class CommanderWindow
         VehicleDefinition vehicle,
         PlacementController controller)
     {
-        bool canAfford = localPlayer.Allocation >= vehicle.value;
-        string cost = UnitConverter.ValueReading(vehicle.value);
+        float price = controller.GetVehiclePrice(vehicle);
+        bool canAfford = localPlayer.Allocation >= price;
+        string cost = UnitConverter.ValueReading(price);
         string type = VehicleTypeLabels.Get(vehicle.vehicleType);
 
         Color previousColor = GUI.backgroundColor;
@@ -178,7 +179,7 @@ internal sealed class CommanderWindow
             GUILayout.Label($"Selected: {selected.unitName}");
             GUILayout.Label(
                 $"Type: {VehicleTypeLabels.Get(selected.vehicleType)} - " +
-                $"Cost: {UnitConverter.ValueReading(selected.value)}");
+                $"Cost: {UnitConverter.ValueReading(controller.GetVehiclePrice(selected))}");
             GUILayout.Label(controller.PreviewStatus);
             GUILayout.Label("Q / E: rotate - left click: purchase and place.");
         }

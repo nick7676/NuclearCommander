@@ -31,6 +31,11 @@ internal sealed class PlacementController : IDisposable
     public VehicleDefinition? SelectedVehicle { get; private set; }
     public string LastMessage { get; private set; } = string.Empty;
 
+    public float GetVehiclePrice(VehicleDefinition vehicle)
+    {
+        return _settings.GetVehiclePrice(vehicle);
+    }
+
     public string PreviewStatus
     {
         get
@@ -98,7 +103,7 @@ internal sealed class PlacementController : IDisposable
 
         SelectedVehicle = vehicle;
         _preview = new PlacementPreview(vehicle);
-        string cost = UnitConverter.ValueReading(vehicle.value);
+        string cost = UnitConverter.ValueReading(GetVehiclePrice(vehicle));
         _log.LogInfo($"Vehicle selected: {vehicle.unitName} [{vehicle.vehicleType}] ({cost})");
     }
 
