@@ -4,8 +4,9 @@ Nuclear Commander is a [BepInEx 5](https://github.com/BepInEx/BepInEx) mod for *
 
 The mod uses the game's vehicle catalogue, prices, player allocation, factions, and native server spawner. Vehicles are purchased individually rather than as platoons.
 
-## Version 0.16.0
+## Version 0.17.0
 
+- Kills made by purchased units now reward the player who placed them through Nuclear Option's native reward system.
 - Vehicle prices are available in the configurator before the mod is launched for the first time.
 - Deployed logistics containers, repair vehicles, native mobile FOBs, and Kar Mobile FOBs can provide a placement area.
 - Kar integration is optional and is ignored safely when the mod is not installed.
@@ -24,6 +25,7 @@ The mod uses the game's vehicle catalogue, prices, player allocation, factions, 
 - Optional Kar Mobile FOB compatibility; Kar is not required
 - Optional hold-position order for newly placed vehicles
 - Automatic refund when spawning fails
+- Native kill rewards for the player who purchased and placed the unit
 
 ## Requirements
 
@@ -47,7 +49,7 @@ The mod uses the game's vehicle catalogue, prices, player allocation, factions, 
 The BepInEx log should contain:
 
 ```text
-Nuclear Commander 0.16.0 loaded successfully.
+Nuclear Commander 0.17.0 loaded successfully.
 ```
 
 ## Usage
@@ -64,6 +66,8 @@ Nuclear Commander 0.16.0 loaded successfully.
 The preview turns green when placement is valid and red when it is not. Placement is allowed only inside a friendly airport area or within 1,000 metres of a friendly static or mobile FOB. Munitions, fuel, supply, rearming, refuelling, and repair containers deployed by friendly helicopters or cargo vehicles count as FOB support units after they have been released and landed. Friendly mobile logistics and repair vehicles also count. Cargo still attached to an aircraft or descending under a parachute does not become active until it reaches the ground. The deployment area restriction is not drawn on the terrain.
 
 Kar Mobile FOB support is optional. Nuclear Commander has no binary reference to Kar and continues to work with native airports, depots, and logistics units when Kar or the Mobile FOB content is not installed.
+
+Every purchased unit is registered to the player who placed it. Kills and assists therefore use Nuclear Option's native reward pipeline: allocation and score are awarded according to the target value, mission reward settings, player tax rate, and the unit's share of the damage. Nuclear Commander does not calculate or duplicate these rewards.
 
 Press `F6` again or use the **Close** button to leave placement mode.
 

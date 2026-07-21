@@ -71,7 +71,7 @@ internal sealed class VehiclePurchaseService
                 uniqueName,
                 1f,
                 _settings.HoldPosition.Value,
-                null);
+                localPlayer);
 
             if (spawnedVehicle == null)
             {

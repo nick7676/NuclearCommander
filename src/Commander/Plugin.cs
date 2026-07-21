@@ -11,7 +11,7 @@ public sealed class Plugin : BaseUnityPlugin
 {
     public const string PluginGuid = "com.nick7676.nuclearcommander";
     public const string PluginName = "Nuclear Commander";
-    public const string PluginVersion = "0.16.0";
+    public const string PluginVersion = "0.17.0";
     public const string KarPluginGuid = "Blueprinter.Kar";
 
     private CommanderSettings _settings = null!;
