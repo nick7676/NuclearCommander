@@ -427,10 +427,10 @@ internal sealed class MainForm : Form
         }
 
         _config.Enabled = _enabled.Checked;
-        _config.TogglePlacementMode = NormalizeKey(_toggleKey.Text, "F6");
-        _config.RotatePreviewLeft = NormalizeKey(_rotateLeftKey.Text, "Q");
-        _config.RotatePreviewRight = NormalizeKey(_rotateRightKey.Text, "E");
-        _config.ConfirmPlacement = NormalizeKey(_confirmKey.Text, "Mouse0");
+        _config.TogglePlacementMode = NormalizeKey(_toggleKey.Text, CommanderConfig.DefaultTogglePlacementMode);
+        _config.RotatePreviewLeft = NormalizeKey(_rotateLeftKey.Text, CommanderConfig.DefaultRotatePreviewLeft);
+        _config.RotatePreviewRight = NormalizeKey(_rotateRightKey.Text, CommanderConfig.DefaultRotatePreviewRight);
+        _config.ConfirmPlacement = NormalizeKey(_confirmKey.Text, CommanderConfig.DefaultConfirmPlacement);
         _config.RotationSpeed = _rotationSpeed.Value;
         _config.MaximumSlope = _maximumSlope.Value;
         _config.FobPlacementRadius = _fobRadius.Value;
@@ -522,7 +522,7 @@ internal sealed class MainForm : Form
 
         if (_config == null || _config.VehiclePrices.Count == 0)
         {
-            _priceNotice.Text = "Start Nuclear Option once with Nuclear Commander 0.15.0 to generate the vehicle catalogue.";
+            _priceNotice.Text = "No vehicle prices are available in this configurator build.";
             _loading = false;
             return;
         }

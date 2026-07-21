@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using BepInEx.Configuration;
+using NuclearCommander.Shared;
 using UnityEngine;
 
 namespace Commander;
@@ -8,7 +9,6 @@ internal sealed class CommanderSettings
 {
     private readonly ConfigFile _config;
     private readonly Dictionary<string, ConfigEntry<float>> _vehiclePrices = new();
-    private bool _vehiclePricesRegistered;
 
     public CommanderSettings(ConfigFile config)
     {
@@ -59,13 +59,15 @@ internal sealed class CommanderSettings
             "Placement",
             "FobPlacementRadius",
             1000f,
-            "Maximum placement distance in metres from a friendly FOB or mobile logistics unit.");
+            "Maximum placement distance in metres from a friendly FOB, deployed logistics container, or mobile logistics unit.");
 
         HoldPosition = config.Bind(
             "Placement",
             "HoldPosition",
             true,
             "Orders newly placed vehicles to hold position.");
+
+        RegisterPreloadedVehiclePrices();
     }
 
     public ConfigEntry<bool> Enabled { get; }
@@ -78,36 +80,22 @@ internal sealed class CommanderSettings
     public ConfigEntry<float> FobPlacementRadius { get; }
     public ConfigEntry<bool> HoldPosition { get; }
 
-    public void RegisterVehiclePrices()
+    private void RegisterPreloadedVehiclePrices()
     {
-        if (_vehiclePricesRegistered ||
-            Encyclopedia.i == null ||
-            Encyclopedia.i.vehicles == null ||
-            Encyclopedia.i.vehicles.Count == 0)
-        {
-            return;
-        }
-
         bool saveOnConfigSet = _config.SaveOnConfigSet;
         _config.SaveOnConfigSet = false;
         try
         {
-            foreach (VehicleDefinition vehicle in Encyclopedia.i.vehicles)
+            foreach (VehiclePriceDefinition vehicle in VehiclePriceCatalog.All)
             {
-                if (vehicle == null || string.IsNullOrWhiteSpace(vehicle.jsonKey))
-                {
-                    continue;
-                }
-
-                _vehiclePrices[vehicle.jsonKey] = _config.Bind(
+                _vehiclePrices[vehicle.Key] = _config.Bind(
                     "Vehicle Prices",
-                    vehicle.jsonKey,
-                    vehicle.value,
-                    $"Purchase price for {vehicle.unitName}.");
+                    vehicle.Key,
+                    (float)vehicle.DefaultPrice,
+                    $"Purchase price for {vehicle.DisplayName}.");
             }
 
             _config.Save();
-            _vehiclePricesRegistered = true;
         }
         finally
         {
@@ -117,9 +105,21 @@ internal sealed class CommanderSettings
 
     public float GetVehiclePrice(VehicleDefinition vehicle)
     {
-        RegisterVehiclePrices();
-        return _vehiclePrices.TryGetValue(vehicle.jsonKey, out ConfigEntry<float> price)
-            ? Mathf.Max(0f, price.Value)
-            : Mathf.Max(0f, vehicle.value);
+        if (string.IsNullOrWhiteSpace(vehicle.jsonKey))
+        {
+            return Mathf.Max(0f, vehicle.value);
+        }
+
+        if (!_vehiclePrices.TryGetValue(vehicle.jsonKey, out ConfigEntry<float> price))
+        {
+            price = _config.Bind(
+                "Vehicle Prices",
+                vehicle.jsonKey,
+                vehicle.value,
+                $"Purchase price for {vehicle.unitName}.");
+            _vehiclePrices[vehicle.jsonKey] = price;
+        }
+
+        return Mathf.Max(0f, price.Value);
     }
 }

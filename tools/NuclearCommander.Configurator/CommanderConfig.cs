@@ -1,11 +1,21 @@
 using System.Globalization;
 using System.Text;
+using NuclearCommander.Shared;
 
 namespace NuclearCommander.Configurator;
 
 internal sealed class CommanderConfig
 {
     public const string FileName = "com.nick7676.nuclearcommander.cfg";
+    public const bool DefaultEnabled = true;
+    public const string DefaultTogglePlacementMode = "F6";
+    public const string DefaultRotatePreviewLeft = "Q";
+    public const string DefaultRotatePreviewRight = "E";
+    public const string DefaultConfirmPlacement = "Mouse0";
+    public const decimal DefaultRotationSpeed = 90m;
+    public const decimal DefaultMaximumSlope = 18m;
+    public const decimal DefaultFobPlacementRadius = 1000m;
+    public const bool DefaultHoldPosition = true;
 
     private readonly List<string> _lines;
 
@@ -16,15 +26,15 @@ internal sealed class CommanderConfig
     }
 
     public string Path { get; }
-    public bool Enabled { get; set; } = true;
-    public string TogglePlacementMode { get; set; } = "F6";
-    public string RotatePreviewLeft { get; set; } = "Q";
-    public string RotatePreviewRight { get; set; } = "E";
-    public string ConfirmPlacement { get; set; } = "Mouse0";
-    public decimal RotationSpeed { get; set; } = 90m;
-    public decimal MaximumSlope { get; set; } = 18m;
-    public decimal FobPlacementRadius { get; set; } = 1000m;
-    public bool HoldPosition { get; set; } = true;
+    public bool Enabled { get; set; } = DefaultEnabled;
+    public string TogglePlacementMode { get; set; } = DefaultTogglePlacementMode;
+    public string RotatePreviewLeft { get; set; } = DefaultRotatePreviewLeft;
+    public string RotatePreviewRight { get; set; } = DefaultRotatePreviewRight;
+    public string ConfirmPlacement { get; set; } = DefaultConfirmPlacement;
+    public decimal RotationSpeed { get; set; } = DefaultRotationSpeed;
+    public decimal MaximumSlope { get; set; } = DefaultMaximumSlope;
+    public decimal FobPlacementRadius { get; set; } = DefaultFobPlacementRadius;
+    public bool HoldPosition { get; set; } = DefaultHoldPosition;
     public List<VehiclePriceSetting> VehiclePrices { get; } = new();
 
     public static CommanderConfig Load(string path)
@@ -45,7 +55,29 @@ internal sealed class CommanderConfig
         config.MaximumSlope = ReadDecimal(values, "Placement/MaximumSlope", config.MaximumSlope);
         config.FobPlacementRadius = ReadDecimal(values, "Placement/FobPlacementRadius", config.FobPlacementRadius);
         config.HoldPosition = ReadBoolean(values, "Placement/HoldPosition", config.HoldPosition);
-        config.VehiclePrices.AddRange(ParseVehiclePrices(lines));
+        List<VehiclePriceSetting> savedPrices = ParseVehiclePrices(lines).ToList();
+        Dictionary<string, VehiclePriceSetting> savedPricesByKey = new(StringComparer.OrdinalIgnoreCase);
+        foreach (VehiclePriceSetting savedPrice in savedPrices)
+        {
+            savedPricesByKey[savedPrice.Key] = savedPrice;
+        }
+
+        foreach (VehiclePriceDefinition definition in VehiclePriceCatalog.All)
+        {
+            decimal value = savedPricesByKey.TryGetValue(definition.Key, out VehiclePriceSetting? savedPrice)
+                ? savedPrice.Value
+                : definition.DefaultPrice;
+            config.VehiclePrices.Add(new VehiclePriceSetting(
+                definition.Key,
+                definition.DisplayName,
+                value,
+                definition.DefaultPrice));
+        }
+
+        HashSet<string> catalogKeys = VehiclePriceCatalog.All
+            .Select(definition => definition.Key)
+            .ToHashSet(StringComparer.OrdinalIgnoreCase);
+        config.VehiclePrices.AddRange(savedPrices.Where(price => !catalogKeys.Contains(price.Key)));
         return config;
     }
 
@@ -82,15 +114,15 @@ internal sealed class CommanderConfig
 
     public void ResetDefaults()
     {
-        Enabled = true;
-        TogglePlacementMode = "F6";
-        RotatePreviewLeft = "Q";
-        RotatePreviewRight = "E";
-        ConfirmPlacement = "Mouse0";
-        RotationSpeed = 90m;
-        MaximumSlope = 18m;
-        FobPlacementRadius = 1000m;
-        HoldPosition = true;
+        Enabled = DefaultEnabled;
+        TogglePlacementMode = DefaultTogglePlacementMode;
+        RotatePreviewLeft = DefaultRotatePreviewLeft;
+        RotatePreviewRight = DefaultRotatePreviewRight;
+        ConfirmPlacement = DefaultConfirmPlacement;
+        RotationSpeed = DefaultRotationSpeed;
+        MaximumSlope = DefaultMaximumSlope;
+        FobPlacementRadius = DefaultFobPlacementRadius;
+        HoldPosition = DefaultHoldPosition;
 
         foreach (VehiclePriceSetting price in VehiclePrices)
         {
@@ -291,19 +323,19 @@ internal sealed class CommanderConfig
         return new List<string>
         {
             "[General]",
-            "Enabled = true",
+            $"Enabled = {DefaultEnabled.ToString().ToLowerInvariant()}",
             string.Empty,
             "[Input]",
-            "TogglePlacementMode = F6",
-            "RotatePreviewLeft = Q",
-            "RotatePreviewRight = E",
-            "ConfirmPlacement = Mouse0",
+            $"TogglePlacementMode = {DefaultTogglePlacementMode}",
+            $"RotatePreviewLeft = {DefaultRotatePreviewLeft}",
+            $"RotatePreviewRight = {DefaultRotatePreviewRight}",
+            $"ConfirmPlacement = {DefaultConfirmPlacement}",
             string.Empty,
             "[Placement]",
-            "RotationSpeed = 90",
-            "MaximumSlope = 18",
-            "FobPlacementRadius = 1000",
-            "HoldPosition = true"
+            $"RotationSpeed = {FormatDecimal(DefaultRotationSpeed)}",
+            $"MaximumSlope = {FormatDecimal(DefaultMaximumSlope)}",
+            $"FobPlacementRadius = {FormatDecimal(DefaultFobPlacementRadius)}",
+            $"HoldPosition = {DefaultHoldPosition.ToString().ToLowerInvariant()}"
         };
     }
 }

@@ -3,7 +3,7 @@
     <TargetFramework>netstandard2.1</TargetFramework>
     <AssemblyName>Commander</AssemblyName>
     <RootNamespace>Commander</RootNamespace>
-    <Version>0.15.0</Version>
+    <Version>0.16.0</Version>
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
     <ImplicitUsings>disable</ImplicitUsings>
@@ -12,6 +12,10 @@
     <Deterministic>true</Deterministic>
     <RestoreAdditionalProjectSources>https://api.nuget.org/v3/index.json;https://nuget.bepinex.dev/v3/index.json</RestoreAdditionalProjectSources>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="..\..\shared\VehiclePriceCatalog.cs" Link="Configuration\VehiclePriceCatalog.cs" />
+  </ItemGroup>
 
   <PropertyGroup Condition="'$(Configuration)' == 'Release'">
     <DebugType>none</DebugType>

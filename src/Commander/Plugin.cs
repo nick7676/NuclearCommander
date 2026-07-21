@@ -1,15 +1,18 @@
 using BepInEx;
+using BepInEx.Bootstrap;
 using Commander.Placement;
 using Commander.UI;
 
 namespace Commander;
 
 [BepInPlugin(PluginGuid, PluginName, PluginVersion)]
+[BepInDependency(KarPluginGuid, BepInDependency.DependencyFlags.SoftDependency)]
 public sealed class Plugin : BaseUnityPlugin
 {
     public const string PluginGuid = "com.nick7676.nuclearcommander";
     public const string PluginName = "Nuclear Commander";
-    public const string PluginVersion = "0.15.0";
+    public const string PluginVersion = "0.16.0";
+    public const string KarPluginGuid = "Blueprinter.Kar";
 
     private CommanderSettings _settings = null!;
     private CommanderWindow _window = null!;
@@ -28,11 +31,14 @@ public sealed class Plugin : BaseUnityPlugin
         }
 
         Logger.LogInfo($"{PluginName} {PluginVersion} loaded successfully.");
+        Logger.LogInfo(
+            Chainloader.PluginInfos.ContainsKey(KarPluginGuid)
+                ? "Kar Mobile FOB compatibility enabled."
+                : "Kar is not installed; Nuclear Commander will use native deployment areas.");
     }
 
     private void Update()
     {
-        _settings.RegisterVehiclePrices();
         _placement.Tick(_settings.Enabled.Value);
     }
 

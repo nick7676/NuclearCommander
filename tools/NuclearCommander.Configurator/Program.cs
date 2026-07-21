@@ -25,8 +25,8 @@ internal static class Program
                 return 2;
             }
 
-            CommanderConfig.Load(path);
-            return 0;
+            CommanderConfig config = CommanderConfig.Load(path);
+            return config.VehiclePrices.Count > 0 ? 0 : 3;
         }
         catch
         {

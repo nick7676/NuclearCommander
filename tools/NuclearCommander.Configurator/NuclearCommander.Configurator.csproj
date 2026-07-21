@@ -5,10 +5,14 @@
     <UseWindowsForms>true</UseWindowsForms>
     <AssemblyName>NuclearCommander.Configurator</AssemblyName>
     <RootNamespace>NuclearCommander.Configurator</RootNamespace>
-    <Version>0.15.0</Version>
+    <Version>0.16.0</Version>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <PublishSingleFile>true</PublishSingleFile>
     <SelfContained>false</SelfContained>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="..\..\shared\VehiclePriceCatalog.cs" Link="VehiclePriceCatalog.cs" />
+  </ItemGroup>
 </Project>

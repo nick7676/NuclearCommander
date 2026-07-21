@@ -4,6 +4,13 @@ Nuclear Commander is a [BepInEx 5](https://github.com/BepInEx/BepInEx) mod for *
 
 The mod uses the game's vehicle catalogue, prices, player allocation, factions, and native server spawner. Vehicles are purchased individually rather than as platoons.
 
+## Version 0.16.0
+
+- Vehicle prices are available in the configurator before the mod is launched for the first time.
+- Deployed logistics containers, repair vehicles, native mobile FOBs, and Kar Mobile FOBs can provide a placement area.
+- Kar integration is optional and is ignored safely when the mod is not installed.
+- Placement-area detection has been reorganized into a cached, shared validation pipeline.
+
 ## Features
 
 - Complete individual ground-vehicle catalogue, including air-defense units
@@ -13,7 +20,8 @@ The mod uses the game's vehicle catalogue, prices, player allocation, factions, 
 - Preview rotation with `Q` and `E`
 - Terrain slope, water, and collision checks
 - Placement inside friendly airport areas
-- Placement within 1 km of friendly static or mobile FOB logistics units
+- Placement within 1 km of friendly static FOBs, mobile logistics vehicles, and deployed cargo FOBs
+- Optional Kar Mobile FOB compatibility; Kar is not required
 - Optional hold-position order for newly placed vehicles
 - Automatic refund when spawning fails
 
@@ -39,7 +47,7 @@ The mod uses the game's vehicle catalogue, prices, player allocation, factions, 
 The BepInEx log should contain:
 
 ```text
-Nuclear Commander 0.15.0 loaded successfully.
+Nuclear Commander 0.16.0 loaded successfully.
 ```
 
 ## Usage
@@ -53,7 +61,9 @@ Nuclear Commander 0.15.0 loaded successfully.
 7. Rotate the preview with `Q` and `E`.
 8. Left-click to purchase and place the vehicle.
 
-The preview turns green when placement is valid and red when it is not. Placement is allowed only inside a friendly airport area or within 1,000 metres of a friendly static or mobile FOB. Mobile logistics vehicles and containers that provide rearming or refuelling count as FOB support units. The deployment area restriction is not drawn on the terrain.
+The preview turns green when placement is valid and red when it is not. Placement is allowed only inside a friendly airport area or within 1,000 metres of a friendly static or mobile FOB. Munitions, fuel, supply, rearming, refuelling, and repair containers deployed by friendly helicopters or cargo vehicles count as FOB support units after they have been released and landed. Friendly mobile logistics and repair vehicles also count. Cargo still attached to an aircraft or descending under a parachute does not become active until it reaches the ground. The deployment area restriction is not drawn on the terrain.
+
+Kar Mobile FOB support is optional. Nuclear Commander has no binary reference to Kar and continues to work with native airports, depots, and logistics units when Kar or the Mobile FOB content is not installed.
 
 Press `F6` again or use the **Close** button to leave placement mode.
 
@@ -65,11 +75,13 @@ Vehicles placed by the host use Nuclear Option's native server spawner and synch
 
 ## Configuration
 
-BepInEx creates the configuration file after the first launch:
+The plugin creates its configuration file during its first load:
 
 ```text
 BepInEx/config/com.nick7676.nuclearcommander.cfg
 ```
+
+You can also create and edit this file before the first launch with the configuration app included in the release.
 
 Default settings:
 
@@ -105,14 +117,7 @@ Place the executable in the folder containing `NuclearOption.exe` and run it whi
 
 The configurator requires the [.NET 8 Desktop Runtime for Windows x64](https://dotnet.microsoft.com/download/dotnet/8.0). If automatic detection fails, use **Choose folder** and select either the Nuclear Option folder or `BepInEx/config` directly.
 
-Before editing vehicle prices:
-
-1. Install `Commander.dll`.
-2. Start Nuclear Option and reach the main menu once.
-3. Close the game.
-4. Open `NuclearCommander.Configurator.exe` and select **Vehicle prices**.
-
-The first game launch lets the mod read the current in-game catalogue and add every vehicle to the configuration file. If the table is empty, close the configurator, launch the game once with Nuclear Commander 0.15.0, then reopen the configurator or press **Reload**. Prices cannot be negative, and **Defaults** restores every vehicle's native game price.
+The configurator includes the complete vehicle price catalogue, so prices can be configured before Nuclear Commander is loaded for the first time. Open the configurator, choose the Nuclear Option folder if it is not detected automatically, edit **Vehicle prices**, and save. The DLL registers and reads the same settings during its `Awake` preload stage. Prices cannot be negative, and **Defaults** restores every vehicle's native game price.
 
 ## Troubleshooting
 
